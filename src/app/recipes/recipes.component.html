@@ -1,0 +1,178 @@
+<h1 class="text-center display-5 mb-4 fw-semibold">
+  Recipes Quantity Calculator
+</h1>
+<div class="container main" [class.highlight]="selectedRecipe">
+  <div class="row mt-4">
+    <h5>Select any recipe from the dropdown</h5>
+    <div class="row">
+      <div class="col-4">
+        <select [(ngModel)]="selected" class="form-select">
+          <option *ngFor="let recipe of recipes" [value]="recipe.name">
+            {{ recipe.name | titlecase }}
+          </option>
+        </select>
+      </div>
+      <div class="col-2">
+        <button (click)="onSelect()" class="btn btn-primary">Select</button>
+      </div>
+    </div>
+    <div *ngIf="selectedRecipe" class="mt-4 col-6">
+      <hr />
+      <h5>Ingredients per 1 serving</h5>
+      <table class="table table-light">
+        <thead class="table-dark">
+          <tr>
+            <th>Ingredient</th>
+            <th>Amount</th>
+            <th>Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ingredient of selectedRecipe.ingredients">
+            <td>{{ ingredient.name }}</td>
+            <td>{{ ingredient.amount }}</td>
+            <td>{{ ingredient.unit }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="selectedRecipe" class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          value=""
+          id="flexCheckDefault"
+          [(ngModel)]="addExtra"
+        />
+        <label class="form-check-label" for="flexCheckDefault">
+          Want to add extra ingredients?
+        </label>
+      </div>
+      <form
+        *ngIf="addExtra"
+        #f="ngForm"
+        (ngSubmit)="addIngredient(f)"
+        class="form-inline row"
+      >
+        <div class="form-group col-4">
+          <label for="name" class="label">Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            pattern="[a-zA-Z ]*"
+            ngModel
+            required
+            class="form-control"
+          />
+          <div></div>
+        </div>
+        <div class="form-group col-4">
+          <label for="amount" class="label">Amount</label>
+          <input
+            type="number"
+            id="amount"
+            name="amount"
+            ngModel
+            required
+            class="form-control"
+          />
+        </div>
+        <div class="form-group col-4">
+          <label for="unit" class="label">Unit</label>
+          <input
+            type="text"
+            id="unit"
+            name="unit"
+            pattern="[a-zA-Z ]*"
+            ngModel
+            required
+            class="form-control"
+          />
+        </div>
+        <div class="d-grid">
+          <button
+            type="submit"
+            [disabled]="!f.valid"
+            class="btn btn-primary mt-3"
+          >
+            Add Ingredient
+          </button>
+        </div>
+      </form>
+      <div *ngIf="selectedRecipe">
+        <hr />
+        <p>How many servings required?</p>
+        <div
+          *ngFor="let serving of [1 / 2, 2, 4, 6, 8]"
+          class="form-check form-check-inline"
+        >
+          <input
+            type="radio"
+            name="serving"
+            [value]="serving"
+            [(ngModel)]="selectedServing"
+            class="form-check-input"
+          />
+          <label class="form-check label">{{ serving }}</label>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="selectedServing" class="col-6">
+      <h4>Estimated required ingredients for {{ selectedServing }} servings</h4>
+      <hr />
+      <table class="table table-warning">
+        <thead class="table-light">
+          <tr>
+            <th>Ingredient</th>
+            <th>Amount</th>
+            <th>Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ingredient of selectedRecipe.ingredients">
+            <td>{{ ingredient.name }}</td>
+            <td>{{ ingredient.amount * selectedServing }}</td>
+            <td>{{ ingredient.unit }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
+      <h6>Any missing recipe? Please share with us!</h6>
+      <form #f="ngForm" (ngSubmit)="feedback(f)" class="form-inline">
+        <div class="form-group">
+          <label for="name" class="label">Recipe Name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            pattern="[a-zA-Z ]*"
+            ngModel
+            required
+            class="form-control"
+          />
+        </div>
+        <div class="form-group">
+          <label for="recipe" class="label">Recipe</label>
+          <textarea
+            type="text"
+            id="recipe"
+            name="recipe"
+            ngModel
+            required
+            class="form-control"
+          >
+          </textarea>
+        </div>
+        <div class="d-grid">
+          <button
+            type="submit"
+            [disabled]="!f.valid"
+            class="btn btn-primary mt-3"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
